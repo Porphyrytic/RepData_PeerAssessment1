@@ -149,6 +149,7 @@ plot(x=Daily_activity$Time,y=Daily_activity$steps,
 
 It was observed that the maximum activity on average was at 08:35am
 
+
 ```r
 print(paste("Max Average Steps taken at:",(Daily_activity[which.max(Daily_activity$steps),]$interval)))
 ```
@@ -201,7 +202,8 @@ ybase_size <- c(10,0,0,0,0,0,0,0,0,0)
 
 ![](PA1_template_files/figure-html/NA_analysis-1.png)
 
-The missing data form the columns (date) of the heatmap above.  This and the absence of oblique trends suggests that the missing values can be replaced with values imputed by the rows (interval) of the heatmap.  Since the interval means were calculated in the previous step, these were used here:
+The missing data form the columns (date) of the heatmap above.  This and the absence of oblique trends suggests that the missing values can be replaced with values imputed by the rows (interval) of the heatmap.  Since the interval means were calculated in the previous step, these values were used here:
+
 
 ```r
 ACT2 <-ACT
@@ -260,7 +262,7 @@ legend("topright",legend=c("Mean","Median"),pch=151,col=c("red","blue"))
 
 ![](PA1_template_files/figure-html/imput_hist-1.png)
 
-Note that much of the first bin of the histogram has been moved to the mean as expected.  This increases the mean but only has a minor effect on the median. The median interval values might have been a more stable value on which to base the imputation.
+Note that much of the first bin of the histogram has been moved to the centre bin as expected. The top two quantiles look largely untouched. This shift increases the total mean but only has a minor effect on the median. The median interval values might have been a more stable value on which to base the imputation.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
