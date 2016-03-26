@@ -1,10 +1,5 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-author: Robert Bril
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
+Robert Bril  
 ## Introduction
 
 It is now possible to collect a large amount of data about personal
@@ -46,13 +41,27 @@ are a total of 17,568 observations in this
 dataset.
 
 ## Load Libraries
-```{r load}
+
+```r
 library(lubridate)
 library(ggplot2)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.2.4
+```
+
+```r
 library(knitr)
 library(stringr)
 library(scales)
+```
 
+```
+## Warning: package 'scales' was built under R version 3.2.4
+```
+
+```r
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ## Loading and preprocessing the data
@@ -62,8 +71,8 @@ The data are loaded into a main activity dataset ("ACT") with appropriate format
 
 Note the presence of NAs in the dataset.
 
-```{r preprocess}
 
+```r
 if(!file.exists("./data")){
         dir.create("./data")}
 
@@ -87,32 +96,58 @@ if(!exists("ACT")){
 head(ACT)
 ```
 
+```
+##   steps       date interval day_type
+## 1    NA 2012-10-01     0000  weekday
+## 2    NA 2012-10-01     0005  weekday
+## 3    NA 2012-10-01     0010  weekday
+## 4    NA 2012-10-01     0015  weekday
+## 5    NA 2012-10-01     0020  weekday
+## 6    NA 2012-10-01     0025  weekday
+```
+
 ## What is mean total number of steps taken per day?
 
 For this stage the NAs observed earlier were ignored. Some basic statistics for the daily totals are computed.
 
-```{r means}
+
+```r
 Daily_Totals <- tapply(ACT$steps,ACT$date,sum,na.rm=TRUE)
 mnDT <- mean(Daily_Totals)
 mdDT <- median(Daily_Totals)
 print(paste("Mean Total Steps/Day:",mnDT))
+```
+
+```
+## [1] "Mean Total Steps/Day: 9354.22950819672"
+```
+
+```r
 print(paste("Median Total Steps/Day:",mdDT))
+```
+
+```
+## [1] "Median Total Steps/Day: 10395"
 ```
 
 It is observed that the mean is significantly less than the median which implies a skewed distribution. A histogram was plotted to check the distribution of daily totals.
 
-```{r mean_plot}
+
+```r
 hist(Daily_Totals, col = "gray",main = "Daily Total Steps", xlab="Daily Totals")
 abline(v=mnDT, col="red",lty=2)
 abline(v=mdDT, col="blue",lty=3)
 legend("topright",legend=c("Mean","Median"),pch=151,col=c("red","blue"))
 ```
 
+![](PA1_template_test_files/figure-html/mean_plot-1.png)
+
 ## What is the average daily activity pattern?
 
 In this section the average activity for each five minute time interval over every date was calculated.
 
-```{r daily_act}
+
+```r
 Daily_activity <- aggregate(steps~interval,ACT,FUN=mean,na.rm=TRUE)
 Daily_activity$Time <- as.POSIXct(strptime(Daily_activity$interval,"%H%M",tz="UTC"))
 
@@ -123,9 +158,16 @@ plot(x=Daily_activity$Time,y=Daily_activity$steps,
      type="l")
 ```
 
+![](PA1_template_test_files/figure-html/daily_act-1.png)
+
 It was observed that the maximum activity on average was at 08:35am
-```{r max_act}
+
+```r
 print(paste("Max Average Steps taken at:",(Daily_activity[which.max(Daily_activity$steps),]$interval)))
+```
+
+```
+## [1] "Max Average Steps taken at: 0835"
 ```
 
 ## Imputing missing values
@@ -134,10 +176,24 @@ In this section the missing values were imputed using a basic model.
 
 First, the extent of the problem was measured. A large number of NAs were found (13%) but the heatmap shows that all the NAs are isolated to 8 missing days. 
 
-```{r NA_analysis}
-print(paste("Total Number of NAs:",sum(is.na(ACT$steps))))
-print(paste("Proportion of NAs:",100*mean(is.na(ACT$steps)),"%"))
 
+```r
+print(paste("Total Number of NAs:",sum(is.na(ACT$steps))))
+```
+
+```
+## [1] "Total Number of NAs: 2304"
+```
+
+```r
+print(paste("Proportion of NAs:",100*mean(is.na(ACT$steps)),"%"))
+```
+
+```
+## [1] "Proportion of NAs: 13.1147540983607 %"
+```
+
+```r
 # Heat map to find NA distribution
 base_size <-10
 xbase_size <- 10
@@ -156,8 +212,11 @@ ybase_size <- c(10,0,0,0,0,0,0,0,0,0)
         )
 ```
 
-The missing data form the columns (date) of the heatmap above.  This and the absence of oblique trends suggests that the missing values can be replaced with values imputed by the rows (interval) of the heatmap.  Since the interval means were calculated in the previous step, these were used here:
-```{r NA_imput}
+![](PA1_template_test_files/figure-html/NA_analysis-1.png)
+
+The missing data form the columns (date) of the heatmap above.  This suggests that the missing values can be replaced with values imputed by the rows (interval) of the heatmap.  Since the interval means were calculated in the previous step, these were used here:
+
+```r
 ACT2 <-ACT
 
 for (i in 1:nrow(ACT2)){
@@ -179,23 +238,40 @@ for (i in 1:nrow(ACT2)){
 )
 ```
 
-Note that the NA columns have been removed.  The data balance looks better overall but the imputed data is slightly dimmer than the real data. This is probably due to the fact that the calculated means included the NAs as zeros.
+![](PA1_template_test_files/figure-html/NA_imput-1.png)
+
+Note that the NA columns have been removed.  The imputed data is noticeably dimmer than the real data. This is probably due to the fact that the calculated means included the NAs as zeros.
 
 A histogram was plotted to visualize this hypothesis.
 
-```{r imput_hist}
+
+```r
 Daily_Totals2 <- tapply(ACT2$steps,ACT2$date,sum,na.rm=TRUE)
 mnDT2 <- mean(Daily_Totals2)
 mdDT2 <- median(Daily_Totals2)
 print(paste("Mean Total Steps/Day (after imputation):",mnDT2))
-print(paste("Median Total Steps/Day (after imputation):",mdDT2))
+```
 
+```
+## [1] "Mean Total Steps/Day (after imputation): 10766.1886792453"
+```
+
+```r
+print(paste("Median Total Steps/Day (after imputation):",mdDT2))
+```
+
+```
+## [1] "Median Total Steps/Day (after imputation): 10766.1886792453"
+```
+
+```r
 hist(Daily_Totals2, col = "gray",main = "Daily Total Steps (with imputation)", xlab="Daily Totals")
 abline(v=mnDT2, col="red",lty=2)
 abline(v=mdDT2, col="blue",lty=3)
 legend("topright",legend=c("Mean","Median"),pch=151,col=c("red","blue"))
-
 ```
+
+![](PA1_template_test_files/figure-html/imput_hist-1.png)
 
 Note that much of the first bin of the histogram has been moved to the mean as expected.  This increases the mean but only has a minor effect on the median. The median interval values might have been a more stable value on which to base the imputation.
 
@@ -203,7 +279,8 @@ Note that much of the first bin of the histogram has been moved to the mean as e
 
 In this section the data were split into weekends and weekdays and summed individually.
 
-```{r wkends}
+
+```r
 Daily_activity <- aggregate(steps~interval,ACT,FUN=mean,na.rm=TRUE)
 Wkdy_activity <- aggregate(steps~interval+day_type,ACT2,FUN=mean,na.rm=TRUE)
 Wkdy_activity$Time <- as.POSIXct(strptime(Daily_activity$interval,"%H%M",tz="UTC"))
@@ -219,5 +296,7 @@ g <- ggplot(Wkdy_activity, aes(Time,steps))
 + labs(title = "Average Daily Activity by Day Type")
 + scale_x_datetime("Interval",labels = date_format("%H:%M"))   )
 ```
+
+![](PA1_template_test_files/figure-html/wkends-1.png)
 
 It's clearly noticeable that activity starts and finishes later on weekends. The overall activity level seems to be higher, but the maximum is lower.
