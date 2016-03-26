@@ -151,9 +151,7 @@ _3. Create a new dataset that is equal to the original dataset but with the miss
 _4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?_
 
 
-In this section the missing values were imputed using a basic model.  
-
-First, the extent of the problem was measured. A large number of NAs were found (13%) but the heatmap shows that all the NAs are isolated to 8 missing days. 
+In this section the missing values were imputed using a basic model. First, the extent of the problem was measured. A large number of NAs were found (13%) but the heatmap shows that all the NAs are isolated to 8 missing days. 
 
 ```{r NA_analysis}
 print(paste("Total Number of NAs:",sum(is.na(ACT$steps))))
@@ -162,18 +160,20 @@ print(paste("Proportion of NAs:",100*mean(is.na(ACT$steps)),"%"))
 # Heat map to find NA distribution
 base_size <-10
 xbase_size <- 10
-ybase_size <- c(10,0,0,0,0,0,0,0,0,0)
+ybase_size <- 10
 
-(p <- ggplot(ACT, aes(date, interval)) 
-+ geom_tile(aes(fill = steps, colour = "white")) 
+(p <- ggplot(ACT, aes(date, as.POSIXct(strptime(interval,"%H%M",tz="UTC")))) 
++ geom_tile(aes(fill = steps)) 
 + scale_fill_gradient(low = "white", high = "steelblue")
-+ theme_grey(base_size = base_size)  + labs(x = "", y = "") 
-+ theme(legend.position = "none", 
-        axis.ticks = element_blank(), 
-        axis.text.x = element_text(size = xbase_size * 1, angle = 330,  
-                                   hjust = 0, colour = "grey50"),
++ theme_grey(base_size = base_size)  
++ labs(x = "Date", y = "Interval") 
++ theme(legend.position = "none",
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = xbase_size * 1, angle = 330,
+                                   hjust = 0.5, colour = "grey50"),
         axis.text.y = element_text(size = ybase_size * 0.8, angle = 330,
-                                   hjust = 0, colour = "grey50"))
+                                   hjust = 0.5, colour = "grey50"))
++ scale_y_datetime("Interval",labels = date_format("%H:%M")) 
         )
 ```
 
@@ -188,17 +188,19 @@ for (i in 1:nrow(ACT2)){
 
 # Heatmap Post-Imputation
 
-(p <- ggplot(ACT2, aes(date, interval)) 
-+ geom_tile(aes(fill = steps, colour = "white")) 
+(p <- ggplot(ACT2, aes(date, as.POSIXct(strptime(interval,"%H%M",tz="UTC")))) 
++ geom_tile(aes(fill = steps)) 
 + scale_fill_gradient(low = "white", high = "steelblue")
-# + theme_grey(base_size = base_size)  + labs(x = "", y = "") 
-+ theme(legend.position = "none", 
-        axis.ticks = element_blank(), 
-        axis.text.x = element_text(size = xbase_size * 0.8, angle = 330,  
-                                   hjust = 0, colour = "grey50"),
++ theme_grey(base_size = base_size)  
++ labs(x = "Date", y = "Interval") 
++ theme(legend.position = "none",
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = xbase_size * 1, angle = 330,
+                                   hjust = 0.5, colour = "grey50"),
         axis.text.y = element_text(size = ybase_size * 0.8, angle = 330,
-                                   hjust = 0, colour = "grey50"))
-)
+                                   hjust = 0.5, colour = "grey50"))
++ scale_y_datetime("Interval",labels = date_format("%H:%M")) 
+        )
 ```
 
 Note that the NA columns have been removed.  The data balance looks better overall.
