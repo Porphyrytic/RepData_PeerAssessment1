@@ -45,23 +45,10 @@ dataset.
 ```r
 library(lubridate)
 library(ggplot2)
-```
-
-```
-## Warning: package 'ggplot2' was built under R version 3.2.4
-```
-
-```r
 library(knitr)
 library(stringr)
 library(scales)
-```
 
-```
-## Warning: package 'scales' was built under R version 3.2.4
-```
-
-```r
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ## Loading and preprocessing the data
@@ -140,7 +127,7 @@ abline(v=mdDT, col="blue",lty=3)
 legend("topright",legend=c("Mean","Median"),pch=151,col=c("red","blue"))
 ```
 
-![](PA1_template_test_files/figure-html/mean_plot-1.png)
+![](PA1_template_files/figure-html/mean_plot-1.png)
 
 ## What is the average daily activity pattern?
 
@@ -158,7 +145,7 @@ plot(x=Daily_activity$Time,y=Daily_activity$steps,
      type="l")
 ```
 
-![](PA1_template_test_files/figure-html/daily_act-1.png)
+![](PA1_template_files/figure-html/daily_act-1.png)
 
 It was observed that the maximum activity on average was at 08:35am
 
@@ -212,9 +199,9 @@ ybase_size <- c(10,0,0,0,0,0,0,0,0,0)
         )
 ```
 
-![](PA1_template_test_files/figure-html/NA_analysis-1.png)
+![](PA1_template_files/figure-html/NA_analysis-1.png)
 
-The missing data form the columns (date) of the heatmap above.  This suggests that the missing values can be replaced with values imputed by the rows (interval) of the heatmap.  Since the interval means were calculated in the previous step, these were used here:
+The missing data form the columns (date) of the heatmap above.  This and the absence of oblique trends suggests that the missing values can be replaced with values imputed by the rows (interval) of the heatmap.  Since the interval means were calculated in the previous step, these were used here:
 
 ```r
 ACT2 <-ACT
@@ -238,9 +225,9 @@ for (i in 1:nrow(ACT2)){
 )
 ```
 
-![](PA1_template_test_files/figure-html/NA_imput-1.png)
+![](PA1_template_files/figure-html/NA_imput-1.png)
 
-Note that the NA columns have been removed.  The imputed data is noticeably dimmer than the real data. This is probably due to the fact that the calculated means included the NAs as zeros.
+Note that the NA columns have been removed.  The data balance looks better overall but the imputed data is slightly dimmer than the real data. This is probably due to the fact that the calculated means included the NAs as zeros.
 
 A histogram was plotted to visualize this hypothesis.
 
@@ -271,7 +258,7 @@ abline(v=mdDT2, col="blue",lty=3)
 legend("topright",legend=c("Mean","Median"),pch=151,col=c("red","blue"))
 ```
 
-![](PA1_template_test_files/figure-html/imput_hist-1.png)
+![](PA1_template_files/figure-html/imput_hist-1.png)
 
 Note that much of the first bin of the histogram has been moved to the mean as expected.  This increases the mean but only has a minor effect on the median. The median interval values might have been a more stable value on which to base the imputation.
 
@@ -297,6 +284,6 @@ g <- ggplot(Wkdy_activity, aes(Time,steps))
 + scale_x_datetime("Interval",labels = date_format("%H:%M"))   )
 ```
 
-![](PA1_template_test_files/figure-html/wkends-1.png)
+![](PA1_template_files/figure-html/wkends-1.png)
 
 It's clearly noticeable that activity starts and finishes later on weekends. The overall activity level seems to be higher, but the maximum is lower.
